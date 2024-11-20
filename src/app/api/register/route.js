@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';  // Importing Next.js response helper
-import connectMongo from '../../../lib/mongodb';  // MongoDB connection helper
-import User from '../../../models/User';  // User model
-import bcrypt from 'bcryptjs';  // Password hashing
+import { NextResponse } from 'next/server';
+import bcrypt from 'bcryptjs';
+import connectMongo from '../../../lib/mongodb';
+import User from '../../../models/User';
 
 export async function POST(request) {
   try {
@@ -16,7 +16,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
     }
 
-    // Check if the user already exists
+    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json({ error: 'Email already registered' }, { status: 400 });

@@ -1,8 +1,8 @@
-'use client'; // For client-side functionality in Next.js with React hooks
+'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation'; // For page redirection after login
-import axios from 'axios'; // For making HTTP requests to your backend API
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -10,23 +10,20 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic client-side validation
+    // Basic validation
     if (!email || !password) {
-      setError('Both fields are required');
+      setError('Email and password are required');
       return;
     }
 
     try {
-      // Sending login data to the backend API
       const response = await axios.post('/api/login', { email, password });
 
       if (response.status === 200) {
-        // Redirect to the dashboard or main page after successful login
-        router.push('/dashboard');  // Replace '/dashboard' with the actual page
+        router.push('/dashboard'); // Redirect to dashboard after successful login
       }
     } catch (err) {
       setError('Error logging in');
@@ -38,29 +35,14 @@ export default function LoginPage() {
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <label>Email:</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </div>
-
         <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <label>Password:</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
-
         {error && <p>{error}</p>}
-
         <button type="submit">Login</button>
       </form>
     </div>
