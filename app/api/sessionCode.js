@@ -1,16 +1,20 @@
-// /app/api/sessionCode.js
 import { getIronSession } from 'iron-session';
-import { cookies } from 'next/headers';
+import { cookies } from 'next/headers';  // Import this for Next.js cookies handling
 
-// This function will get the session using the cookie and password for encryption
+const SESSION_SECRET = 'f3d9d0b9a6e7a8d4c8f3a7e9c1a2b3d4';  // 32+ chars
+
 export async function getCustomSession() {
-  console.log("loading session stuff");
-  
-  // This is the password used to encrypt the session, ensure it's secret and safe
-  const pw = "VIi8pH38vD8ZLgEZclSa7an3olx4pkh6pvBj9fGZf"; 
+  // Await cookies() for asynchronous handling in Next.js
+  const cookieStore = await cookies();
 
-  // Get the session from the cookies
-  const session = await getIronSession(cookies(), { password: pw, cookieName: "app" });
+  const session = await getIronSession(cookieStore, {
+    password: SESSION_SECRET,  // Using the long session secret
+    cookieName: 'app',         // Name of the cookie storing session data
+    ttl: 60 * 60 * 24 * 7,     // Session TTL (7 days)
+    secure: process.env.NODE_ENV === 'production', // Ensure cookies are secure in production
+  });
 
   return session;
 }
+
+

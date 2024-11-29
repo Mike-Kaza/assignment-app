@@ -9,18 +9,17 @@ export default function LoginPage() {
   const [error, setError] = useState(null);
 
   const handleLogin = async () => {
-    // Send the login credentials to the server
     const res = await fetch('/api/login', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
 
     if (res.ok) {
-      // Redirect to dashboard after successful login
-      window.location.href = '/dashboard';
+      const data = await res.json();
+      // Store the role in localStorage
+      localStorage.setItem('userRole', data.role);  // Store the role (manager or customer)
+      window.location.href = '/dashboard';  // Redirect to dashboard
     } else {
       setError('Invalid credentials');
     }
@@ -30,9 +29,9 @@ export default function LoginPage() {
     <Container>
       <Box sx={{ mt: 4 }}>
         <Typography variant="h5" gutterBottom>Login</Typography>
-        
+
         {error && <Typography color="error">{error}</Typography>}
-        
+
         <TextField
           label="Email"
           fullWidth
@@ -48,7 +47,7 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           sx={{ mb: 2 }}
         />
-        
+
         <Button variant="contained" color="primary" onClick={handleLogin}>
           Login
         </Button>
@@ -56,3 +55,4 @@ export default function LoginPage() {
     </Container>
   );
 }
+
