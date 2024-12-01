@@ -2,14 +2,14 @@
 
 import * as React from 'react';
 import { Box, Typography } from '@mui/material';
-import Header from '../src/components/Header'; // Import the Header component
+import Header from '../src/components/Header';
 
 export default function HomePage() {
   return (
     <Box>
-      <Header /> {/* Use the Header component */}
+      <Header /> { }
       <Box sx={{ marginTop: '80px', padding: '20px' }}>
-        {/* Your page content goes here */}
+        {}
         <Typography variant="h4" gutterBottom>
           Welcome to the Krispy Kreme App
         </Typography>

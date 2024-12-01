@@ -14,22 +14,22 @@ export default function RegisterPage() {
       return;
     }
 
-    const accType = 'customer'; // Hardcoded as customer
+    const accType = 'customer'; //hardcoded as customer
 
     try {
-      const res = await fetch('/api/register', {  // Correct API endpoint
+      const res = await fetch('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, acc_type: accType }),  // Send email, password, and accType
+        body: JSON.stringify({ email, password, acc_type: accType }),  //send email, password, and accType
       });
 
-      const data = await res.json(); // Parse the response body
+      const data = await res.json();
 
       if (res.ok) {
-        // Redirect to login page after successful registration
-        window.location.href = '/login';  // Simple redirect to login page
+        //redirect to login page after successful registration
+        window.location.href = '/login';
       } else {
         setError(data.error || 'Registration failed');
       }
@@ -47,10 +47,10 @@ export default function RegisterPage() {
         {error && <Typography color="error">{error}</Typography>}
 
         <TextField
-          label="Email" // Changed from Username to Email
+          label="Email"
           fullWidth
           value={email}
-          onChange={(e) => setEmail(e.target.value)} // Set email value
+          onChange={(e) => setEmail(e.target.value)}
           sx={{ mb: 2 }}
         />
         <TextField
@@ -58,7 +58,7 @@ export default function RegisterPage() {
           type="password"
           fullWidth
           value={password}
-          onChange={(e) => setPassword(e.target.value)} // Set password value
+          onChange={(e) => setPassword(e.target.value)}
           sx={{ mb: 2 }}
         />
 

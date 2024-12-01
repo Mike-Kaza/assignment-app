@@ -1,38 +1,42 @@
-// /app/api/register/route.js
 import { MongoClient } from 'mongodb';
 
 export async function POST(req) {
-  const { email, password, acc_type } = await req.json();  // Get data from the request body
+  //request body to get email, password, and account type
+  const { email, password, acc_type } = await req.json();
 
-  const url = 'mongodb+srv://mikekazakovas123:Mariusma5*@cluster0.douvo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+
+  const url = process.env.MONGO_URI;
   const client = new MongoClient(url);
-  const dbName = 'app';  // Replace with your actual database name
+  const dbName = 'app';
 
   try {
-    await client.connect();  // Connect to MongoDB
+    //connect to DB and get the user collection
+    await client.connect();
     const db = client.db(dbName);
-    const collection = db.collection('login');  // The collection where users are stored
+    const collection = db.collection('login');
 
-    // Check if the email already exists
+    //check if a user with the same email already exists
     const existingUser = await collection.findOne({ email });
     if (existingUser) {
       return new Response(JSON.stringify({ error: 'Email already exists' }), { status: 400 });
     }
 
-    // Insert the new user into the collection
+    //create a new user
     const newUser = {
       email,
       pass: password,
-      acc_type: acc_type || 'customer',  // Default to 'customer' if no account type is provided
+      acc_type: acc_type || 'customer', //default to customer
     };
 
-    await collection.insertOne(newUser);  // Insert new user into MongoDB
+    //insert the new user into the collection
+    await collection.insertOne(newUser);
 
     return new Response(JSON.stringify({ message: 'User registered successfully' }), { status: 200 });
   } catch (error) {
     console.error('Error registering user:', error);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
+    return new Response(JSON.stringify({ error: 'Something went wrong' }), { status: 500 });
   } finally {
-    await client.close();  // Close the MongoDB connection
+    await client.close();
   }
 }
+

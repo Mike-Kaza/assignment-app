@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useState } from 'react';
 import { Box, Button, TextField, Typography, Container } from '@mui/material';
@@ -7,6 +7,8 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+
+//function handle login process
 
   const handleLogin = async () => {
     const res = await fetch('/api/login', {
@@ -17,9 +19,15 @@ export default function LoginPage() {
 
     if (res.ok) {
       const data = await res.json();
-      // Store the role in localStorage
-      localStorage.setItem('userRole', data.role);  // Store the role (manager or customer)
-      window.location.href = '/dashboard';  // Redirect to dashboard
+
+      //redirect based on user role
+      if (data.role === 'manager') {
+        window.location.href = '/manager-dashboard';
+      } else if (data.role === 'customer') {
+        window.location.href = '/dashboard';
+      } else {
+        setError('Invalid role assigned. Please contact support.');
+      }
     } else {
       setError('Invalid credentials');
     }
@@ -55,4 +63,5 @@ export default function LoginPage() {
     </Container>
   );
 }
+
 

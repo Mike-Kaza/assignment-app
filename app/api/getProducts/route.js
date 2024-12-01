@@ -1,10 +1,10 @@
-// /app/api/getProducts/route.js
+
 import { MongoClient } from 'mongodb';
 
 export async function GET() {
   const url = 'mongodb+srv://mikekazakovas123:Mariusma5*@cluster0.douvo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
   const client = new MongoClient(url);
-  const dbName = 'test'; // Replace with your database name
+  const dbName = 'test';
 
   try {
     await client.connect();
@@ -12,12 +12,12 @@ export async function GET() {
 
     const db = client.db(dbName);
     const collection = db.collection('products');
-    const products = await collection.find({}).toArray(); // Fetch all products
+    const products = await collection.find({}).toArray(); //fetch all products
 
     // Return the response using the new Response API
     return new Response(JSON.stringify(products), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },  // Ensure correct Content-Type
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -26,6 +26,6 @@ export async function GET() {
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   } finally {
-    await client.close();  // Close MongoDB connection
+    await client.close();
   }
 }

@@ -1,51 +1,43 @@
 import { MongoClient } from 'mongodb';
-import { getCustomSession } from '../sessionCode.js';  // Import the session management function
+import { getCustomSession } from '../sessionCode.js';
 
 export async function POST(req) {
-  const { email, password } = await req.json();  // Get data from the request body
+  //Parse the request body to get email and password
+  const { email, password } = await req.json();
 
-  const url = process.env.MONGO_URI;  // MongoDB URI from .env
+
+  const url = process.env.MONGO_URI;
   const client = new MongoClient(url);
-  const dbName = 'app';  // Database name
+  const dbName = 'app';
 
   try {
-    await client.connect();  // Connect to MongoDB
+    // connect to DB and get the user collection
+    await client.connect();
     const db = client.db(dbName);
-    const collection = db.collection('login');  // User collection
+    const collection = db.collection('login');
 
-    const user = await collection.findOne({ email });  // Find user by email
+    //check if a user exists with the given email
+    const user = await collection.findOne({ email });
 
-    if (user && user.pass === password) {  // Validate user credentials
+    //validate the password and create a session if valid
+    if (user && user.pass === password) {
+      const session = await getCustomSession(req); // Create session
+      session.email = user.email; // Save email in session
+      session.role = user.acc_type; // Save role in session
+      await session.save(); // Save session
 
-      // Create session using Iron Session
-      const session = await getCustomSession(req);  // Get session
-
-      session.email = user.email;  // Store the email in the session
-      session.role = user.acc_type;  // Store the role (manager or customer) in the session
-
-      await session.save();  // Save the session
-
-      // Return a successful response (200)
-      return new Response(
-        JSON.stringify({ message: 'Login successful', role: user.acc_type }),
-        { status: 200 }
-      );
-    } else {
-      // Return a 401 Unauthorized response for invalid credentials
-      return new Response(
-        JSON.stringify({ error: 'Invalid credentials' }),
-        { status: 401 }
-      );
+      return new Response(JSON.stringify({ message: 'Login successful', role: user.acc_type }), {
+        status: 200,
+      });
     }
+
+    //return an error if credentials are invalid
+    return new Response(JSON.stringify({ error: 'Invalid credentials' }), { status: 401 });
   } catch (error) {
-    console.error('Login error:', error);
-    // Return a 500 Internal Server Error response
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500 }
-    );
+    console.error('Error during login:', error);
+    return new Response(JSON.stringify({ error: 'Something went wrong' }), { status: 500 });
   } finally {
-    await client.close();  // Close MongoDB connection
+    await client.close();
   }
 }
 
