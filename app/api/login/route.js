@@ -5,6 +5,9 @@ export async function POST(req) {
   //Parse the request body to get email and password
   const { email, password } = await req.json();
 
+  console.log('Mongo URI:', process.env.MONGO_URI); 
+
+
 
   const url = process.env.MONGO_URI;
   const client = new MongoClient(url);
