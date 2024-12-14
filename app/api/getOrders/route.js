@@ -13,10 +13,10 @@ export async function GET(req) {
     //fetch all orders from the "orders" collection
     const orders = await db.collection('orders').find({}).toArray();
 
-    // Close the MongoDB connection
+
     await client.close();
 
-    // Respond with the list of orders
+    //respond with the list of orders
     return new Response(
       JSON.stringify({ orders }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }

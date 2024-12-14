@@ -5,16 +5,16 @@ import { Box, Button, AppBar, Toolbar, Typography } from '@mui/material';
 import Link from 'next/link';
 
 export default function Header() {
-  const [role, setRole] = useState(null); //store the user's role
+  const [role, setRole] = useState(null); //user's role state
 
   useEffect(() => {
     const fetchSession = async () => {
       try {
-        const res = await fetch('/api/check-session'); //call the session check API
+        const res = await fetch('/api/check-session'); //fetch session data
         const data = await res.json();
 
         if (res.ok && data.role) {
-          setRole(data.role); //set the user's role (manager or customer)
+          setRole(data.role); //update role
         }
       } catch (error) {
         console.error('Error fetching session:', error);
@@ -34,7 +34,7 @@ export default function Header() {
           {role && (
             <Button
               component={Link}
-              href={role === 'manager' ? '/manager-dashboard' : '/dashboard'} //dynamic link based on role
+              href={role === 'manager' ? '/manager-dashboard' : '/dashboard'} //dashboard link based on role
               color="inherit"
             >
               DASHBOARD
@@ -54,5 +54,6 @@ export default function Header() {
     </Box>
   );
 }
+
 
 

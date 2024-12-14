@@ -1,10 +1,10 @@
 import { MongoClient } from 'mongodb';
 import nodemailer from 'nodemailer';
-import { getCustomSession } from '../sessionCode.js'; // Session management
+import { getCustomSession } from '../sessionCode.js';
 
 export async function POST(req) {
   try {
-    const session = await getCustomSession(req); // Fetch the session
+    const session = await getCustomSession(req); //fetch the session
     if (!session?.email) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
@@ -12,15 +12,15 @@ export async function POST(req) {
       );
     }
 
-    const email = session.email; // User's email
+    const email = session.email;
     const url = 'mongodb+srv://mikekazakovas123:Mariusma5*@cluster0.douvo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
     const client = new MongoClient(url);
-    const dbName = 'test'; // Your database name
+    const dbName = 'test';
 
     await client.connect();
     const db = client.db(dbName);
 
-    // Fetch all cart items for the user
+    //fetch all cart items for the user
     const cartItems = await db.collection('shopping_cart').find({ email }).toArray();
 
     if (cartItems.length === 0) {
@@ -30,37 +30,37 @@ export async function POST(req) {
       );
     }
 
-    // Prepare product names array
+    //prepare product names array
     const productNames = cartItems.map(item => item.pname);
 
-    // Calculate total
+    //calculate total
     const total = cartItems.reduce((sum, item) => sum + item.price, 0);
 
-    // Store the order in the "orders" collection
+    //Store the order in the "orders" collection
     const order = {
       email,
-      date: new Date().toISOString().split('T')[0], // Today's date in YYYY-MM-DD format
+      date: new Date().toISOString().split('T')[0], //todays date in YYYY-MM-DD format
       products: productNames,
-      total: parseFloat(total.toFixed(2)), // Round total to 2 decimals
+      total: parseFloat(total.toFixed(2)), //Round total to 2 decimals
     };
 
     await db.collection('orders').insertOne(order);
 
-    // Clear the user's shopping cart
+    //clear the user's shopping cart
     await db.collection('shopping_cart').deleteMany({ email });
 
-    // Set up Nodemailer transporter
+    //Nodemailer
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'your-email@gmail.com', // Replace with your Gmail
-        pass: 'your-email-password', // Replace with your Gmail App Password
+        user: 'kovasmusicc@gmail.com',
+        pass: 'Mariusma5*',
       },
     });
 
-    // Email content
+    //Email
     const mailOptions = {
-      from: '"Krispy Kreme App" <your-email@gmail.com>',
+      from: '"Krispy Kreme App" <kovasmusicc@gmail.com>',
       to: email,
       subject: 'Order Confirmation',
       html: `
@@ -78,7 +78,7 @@ export async function POST(req) {
     const info = await transporter.sendMail(mailOptions);
     console.log('Email sent:', info.messageId);
 
-    // Close the MongoDB connection
+
     await client.close();
 
     return new Response(

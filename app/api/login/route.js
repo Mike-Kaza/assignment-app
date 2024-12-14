@@ -1,5 +1,6 @@
 import { MongoClient } from 'mongodb';
 import { getCustomSession } from '../sessionCode.js';
+import bcrypt from 'bcrypt';
 
 export async function POST(req) {
   //Parse the request body to get email and password
@@ -7,14 +8,12 @@ export async function POST(req) {
 
   console.log('Mongo URI:', process.env.MONGO_URI);
 
-
-
   const url = process.env.MONGO_URI;
   const client = new MongoClient(url);
   const dbName = 'app';
 
   try {
-    // connect to DB and get the user collection
+    //connect to DB and get the user collection
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection('login');
@@ -23,11 +22,12 @@ export async function POST(req) {
     const user = await collection.findOne({ email });
 
     //validate the password and create a session if valid
-    if (user && user.pass === password) {
-      const session = await getCustomSession(req); // Create session
-      session.email = user.email; // Save email in session
-      session.role = user.acc_type; // Save role in session
-      await session.save(); // Save session
+    if (user && bcrypt.compareSync(password, user.pass)) {
+      console.log("Hash Comparison Result", bcrypt.compareSync(password, user.pass)); // Log hash result
+      const session = await getCustomSession(req); //Create session
+      session.email = user.email; //Save email in session
+      session.role = user.acc_type; //Save role in session
+      await session.save(); //Save session
 
       return new Response(JSON.stringify({ message: 'Login successful', role: user.acc_type }), {
         status: 200,
@@ -43,4 +43,5 @@ export async function POST(req) {
     await client.close();
   }
 }
+
 

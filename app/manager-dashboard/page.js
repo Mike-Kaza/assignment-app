@@ -27,7 +27,7 @@ export default function ManagerDashboard() {
 
   return (
     <Container component="main" maxWidth="lg" sx={{ mt: 4 }}>
-      <Header /> {/* Include the Header component */}
+      <Header /> {}
       <Typography variant="h4" align="center" sx={{ mb: 4 }}>
         Manager Dashboard
       </Typography>

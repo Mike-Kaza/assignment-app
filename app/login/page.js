@@ -2,19 +2,34 @@
 
 import { useState } from 'react';
 import { Box, Button, TextField, Typography, Container } from '@mui/material';
+import validator from 'email-validator';
+import escapeHtml from 'escape-html';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
-//function handle login process
-
+  //function handle login process
   const handleLogin = async () => {
+    if (!email || !password) {
+      setError('Email and password cannot be blank');
+      return;
+    }
+
+    if (!validator.validate(email)) {
+      setError('Invalid email format');
+      return;
+    }
+
+    
+    const sanitizedEmail = escapeHtml(email);
+    const sanitizedPassword = escapeHtml(password);
+
     const res = await fetch('/api/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email: sanitizedEmail, password: sanitizedPassword }),
     });
 
     if (res.ok) {
@@ -46,6 +61,7 @@ export default function LoginPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           sx={{ mb: 2 }}
+          inputProps={{ maxLength: 30 }}
         />
         <TextField
           label="Password"
@@ -54,6 +70,7 @@ export default function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           sx={{ mb: 2 }}
+          inputProps={{ maxLength: 50 }}
         />
 
         <Button variant="contained" color="primary" onClick={handleLogin}>
@@ -63,5 +80,6 @@ export default function LoginPage() {
     </Container>
   );
 }
+
 
 

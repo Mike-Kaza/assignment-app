@@ -1,9 +1,9 @@
 import { MongoClient } from 'mongodb';
+import bcrypt from 'bcrypt';
 
 export async function POST(req) {
   //request body to get email, password, and account type
   const { email, password, acc_type } = await req.json();
-
 
   const url = process.env.MONGO_URI;
   const client = new MongoClient(url);
@@ -22,9 +22,12 @@ export async function POST(req) {
     }
 
     //create a new user
+    const saltRounds = 10;
+    const hashedPassword = bcrypt.hashSync(password, saltRounds);
+
     const newUser = {
       email,
-      pass: password,
+      pass: hashedPassword,
       acc_type: acc_type || 'customer', //default to customer
     };
 
@@ -39,4 +42,5 @@ export async function POST(req) {
     await client.close();
   }
 }
+
 

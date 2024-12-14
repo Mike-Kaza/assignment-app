@@ -1,9 +1,9 @@
 import { MongoClient } from 'mongodb';
-import { getCustomSession } from '../sessionCode.js'; // Session management
+import { getCustomSession } from '../sessionCode.js';
 
 export async function GET(req) {
   try {
-    const session = await getCustomSession(req); // Fetch the session
+    const session = await getCustomSession(req); //fetch the session
     if (!session?.email) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
@@ -11,25 +11,25 @@ export async function GET(req) {
       );
     }
 
-    const email = session.email; // Use the logged-in user's email
+    const email = session.email; //use the logged in users email
 
-    // MongoDB Atlas connection
+
     const url = 'mongodb+srv://mikekazakovas123:Mariusma5*@cluster0.douvo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
     const client = new MongoClient(url);
     const dbName = 'test'; //
-    const collectionName = 'shopping_cart'; // Shopping cart collection
+    const collectionName = 'shopping_cart'; //shopping cart collection
 
     await client.connect();
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
 
-    // Fetch all items for the logged-in user
+    //fetch all items for the logged in user
     const items = await collection.find({ email }).toArray();
 
     // Close connection
     await client.close();
 
-    // Respond with the items
+    //Respond with the items
     return new Response(
       JSON.stringify({ items }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }

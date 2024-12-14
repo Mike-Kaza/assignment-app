@@ -15,17 +15,17 @@ export async function GET(req) {
     const pname = searchParams.get('pname'); // Product name from query params
     const email = session.email; // Use the logged-in user's email
 
-    // MongoDB Atlas connection
+
     const url = 'mongodb+srv://mikekazakovas123:Mariusma5*@cluster0.douvo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
     const client = new MongoClient(url);
-    const dbName = 'test'; // Your database name
-    const collectionName = 'shopping_cart'; // Shopping cart collection
-    const productsCollectionName = 'products'; // Products collection
+    const dbName = 'test';
+    const collectionName = 'shopping_cart';
+    const productsCollectionName = 'products';
 
     await client.connect();
     const db = client.db(dbName);
 
-    // Fetch the product details from the "products" collection
+    //Fetch the product details from the "products" collection
     const product = await db.collection(productsCollectionName).findOne({ pname });
 
     if (!product) {
@@ -40,7 +40,7 @@ export async function GET(req) {
       pname: product.pname,
       price: product.price,
       description: product.description,
-      email, // Associate cart item with the logged-in user
+      email, //Associate cart item with the logged-in user
     };
 
     // Insert the item into the "shopping_cart" collection

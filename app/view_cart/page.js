@@ -5,18 +5,17 @@ import { Box, Typography, Container, Grid, Card, CardContent, Button } from '@mu
 import Header from '../../src/components/Header';
 
 export default function ViewCart() {
-  const [cartItems, setCartItems] = useState([]); //store cart items
-  const [totalPrice, setTotalPrice] = useState(0); //store total price
+  const [cartItems, setCartItems] = useState([]); //stores the cart items fetched from the db
+  const [totalPrice, setTotalPrice] = useState(0); //tracks the total price of items in the cart
 
   useEffect(() => {
     const fetchCartItems = async () => {
       try {
-        const res = await fetch('/api/getCartItems'); //call the API to get cart items
+        const res = await fetch('/api/getCartItems'); //API call to fetch cart items
         const data = await res.json();
         if (res.ok) {
-          setCartItems(data.items); //store cart items in state
-          //calculate total price
-          const total = data.items.reduce((sum, item) => sum + item.price, 0);
+          setCartItems(data.items); //updates cart with fetched items
+          const total = data.items.reduce((sum, item) => sum + item.price, 0); //calculates total price
           setTotalPrice(total);
         } else {
           console.error(data.error || 'Failed to fetch cart items');
@@ -26,17 +25,17 @@ export default function ViewCart() {
       }
     };
 
-    fetchCartItems();
+    fetchCartItems(); //fetch cart data
   }, []);
 
   const handleCheckout = async () => {
     try {
-      const res = await fetch('/api/checkout', { method: 'POST' });
+      const res = await fetch('/api/checkout', { method: 'POST' }); //initiates checkout process
       const data = await res.json();
       if (res.ok) {
         alert('Order placed successfully! Check your email for confirmation.');
-        setCartItems([]); //clear cart after checkout
-        setTotalPrice(0); //reset total price
+        setCartItems([]); //clears the cart
+        setTotalPrice(0); //resets the total price
       } else {
         alert(data.error || 'Failed to place order.');
       }
@@ -48,7 +47,7 @@ export default function ViewCart() {
 
   return (
     <Container component="main" maxWidth="lg" sx={{ mt: 4 }}>
-      <Header /> {}
+      <Header />
       <Typography variant="h4" align="center" sx={{ mb: 4 }}>
         Your Shopping Cart
       </Typography>

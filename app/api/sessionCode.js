@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';  //cookies handling
 const SESSION_SECRET = 'f3d9d0b9a6e7a8d4c8f3a7e9c1a2b3d4';
 
 export async function getCustomSession() {
-  // Await cookies() for asynchronous handling in Next.js
+
   const cookieStore = await cookies();
 
   const session = await getIronSession(cookieStore, {

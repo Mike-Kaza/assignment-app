@@ -1,12 +1,12 @@
 export async function GET(req) {
   console.log("Fetching weather data...");
 
-  // Use the provided WeatherAPI call
+  //provided WeatherAPI call
   const response = await fetch(
     "http://api.weatherapi.com/v1/current.json?key=2ab0f8da3a97444d956170718243011&q=Dublin&aqi=no"
   );
 
-  // Check if the response is valid
+  //check if the response is valid
   if (!response.ok) {
     return new Response(
       JSON.stringify({ error: "Failed to fetch weather data" }),
@@ -17,7 +17,7 @@ export async function GET(req) {
   const data = await response.json();
   console.log("Weather data:", data);
 
-  // Extract the temperature and return it as JSON
+  //extract the temperature and return it as JSON
   const currentTemp = data.current.temp_c;
   return new Response(
     JSON.stringify({ temp: currentTemp }),
